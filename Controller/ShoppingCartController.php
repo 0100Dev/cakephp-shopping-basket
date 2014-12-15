@@ -4,7 +4,7 @@ App::uses('WebshopShoppingCartAppController', 'WebshopShoppingCart.Controller');
 
 class ShoppingCartController extends WebshopShoppingCartAppController {
 
-	public $uses = array('Webshop.Product');
+	public $uses = array('Webshop.Product', 'Webshop.Customer', 'Webshop.AddressDetail', 'WebshopOrders.Order', 'WebshopShipping.ShippingMethod');
 
 	public function index() {
 		$cart_items = $this->Product->getCartItems();
@@ -14,7 +14,25 @@ class ShoppingCartController extends WebshopShoppingCartAppController {
 				'id' => array_keys($cart_items)
 			)
 		));
+
 		$this->set(compact('cart_items', 'products'));
+	}
+
+	public function edit_configuration($id) {
+		$this->Product->id = $id;
+
+		$cartItems = $this->Product->getCartItems();
+
+		$this->set('cartItem', $cartItems[$id]);
+
+		$this->set('product', $this->Product->read());
+
+		if ($this->request->is('post')) {
+
+			$this->Product->setCartConfiguration($id, $this->request->data['Configuration']);
+
+			$this->redirect(array('action' => 'index'));
+		}
 	}
 
 	public function add_product($id) {
@@ -89,8 +107,78 @@ class ShoppingCartController extends WebshopShoppingCartAppController {
 		$this->redirect(array('action' => 'index'));
 	}
 
+	public function is_empty() {
+		$cart_items = $this->Product->getCartItems();
+
+		$empty = (count($cart_items) === 0);
+
+		if ($this->request->is('requested')) {
+			return $empty;
+		}
+
+		$this->set('empty', $empty);
+		$this->set('_serialize', array('empty'));
+	}
+
 	public function checkout() {
-		debug($this->request->data);
+		$customers = $this->Customer->find('list', array(
+			'conditions' => array(
+				$this->Customer->alias . '.id' => $this->CustomerAccess->getAccessibleCustomers()
+			)
+		));
+		$shippingMethods = $this->ShippingMethod->find('list', array(
+			'conditions' => array(
+				$this->ShippingMethod->alias . '.active' => true,
+				$this->ShippingMethod->alias . '.available' => true
+			)
+		));
+		$addressDetails = $this->AddressDetail->find('list', array(
+			'fields' => array(
+				$this->AddressDetail->alias . '.id',
+				$this->AddressDetail->alias . '.name',
+				$this->AddressDetail->Customer->alias . '.name',
+			),
+			'conditions' => array(
+				$this->AddressDetail->alias . '.customer_id' => $this->CustomerAccess->getCustomerId()
+			),
+			'recursive' => 0
+		));
+
+		$hasPhysicalProducts = ($this->Product->find('count', array(
+			'conditions' => array(
+				'id' => array_keys($this->Product->getCartItems()),
+				'digital' => 0
+			)
+		)) > 0);
+
+		$this->set(compact('customers', 'shippingMethods', 'addressDetails', 'hasPhysicalProducts'));
+
+		if (!$this->request->is('post')) {
+			return;
+		}
+
+		$order = $this->Order->createFromCart($this->request->data['Order']['customer_id']);
+
+		if ($hasPhysicalProducts) {
+			debug($this->Order->createShipment(
+				$order['Order']['id'],
+				$this->request->data['Order']['OrderShipment']['Shipment']['shipping_method_id'],
+				$this->request->data['Order']['OrderShipment']['Shipment']['address_detail_id']
+			));
+		}
+		$this->Session->setFlash(__d(
+			'webshop_shopping_cart',
+			'An order has been created from your shopping cart with number #%1$d',
+			$order['Order']['number']
+		));
+
+		$this->redirect(array(
+			'panel' => true,
+			'plugin' => 'webshop_orders',
+			'controller' => 'orders',
+			'action' => 'view',
+			$order['Order']['id']
+		));
 	}
 
 }

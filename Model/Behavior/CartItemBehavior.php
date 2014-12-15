@@ -21,7 +21,8 @@ class CartItemBehavior extends ModelBehavior {
 			$products[$id]['amount'] += $amount;
 		} else {
 			$products[$id] = array(
-				'amount' => $amount
+				'amount' => $amount,
+				'configuration' => array()
 			);
 		}
 
@@ -35,6 +36,17 @@ class CartItemBehavior extends ModelBehavior {
 		}
 
 		unset($products[$id]);
+
+		CakeSession::write('WebshopShoppingCart.products', $products);
+	}
+
+	public function setCartConfiguration(Model $Model, $id, $configuration) {
+		$products = CakeSession::read('WebshopShoppingCart.products');
+		if ($products === null) {
+			$products = array();
+		}
+
+		$products[$id]['configuration'] = $configuration;
 
 		CakeSession::write('WebshopShoppingCart.products', $products);
 	}

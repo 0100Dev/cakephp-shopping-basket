@@ -1,6 +1,7 @@
 <?php
 
 Croogo::hookBehavior('Product', 'WebshopShoppingCart.CartItem');
+Croogo::hookBehavior('Order', 'WebshopShoppingCart.CartOrder');
 
 CroogoNav::add('node-menu-product', 'add-to-cart', array(
 	'icon'  => array('comments', 'large'),
