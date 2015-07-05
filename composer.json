@@ -1,7 +1,10 @@
 {
-	"name": "cvo-technologies/croogo-webshop-shopping-cart-plugin",
-	"type": "cakephp-plugin",
-	"require": {
-		"cvo-technologies/croogo-webshop-plugin": "3.0.*@dev"
-	}
+    "name": "cvo-technologies/croogo-webshop-shopping-cart-plugin",
+    "type": "cakephp-plugin",
+    "require": {
+        "cvo-technologies/croogo-webshop-plugin": "3.0.*@dev"
+    },
+    "autoload": {
+        "\\Webshop\\ShoppingCart": "src"
+    }
 }

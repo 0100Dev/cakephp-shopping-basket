@@ -20,11 +20,13 @@
 //	'controller' => 'shopping_cart',
 //));
 //
-//CroogoRouter::connect('/cart/*', array(
-//	'plugin'     => 'webshop_shopping_cart',
-//	'controller' => 'shopping_cart',
-//	'action'     => 'index'
-//));
+use Croogo\Core\CroogoRouter;
+
+CroogoRouter::connect('/cart/*', array(
+	'plugin'     => 'Webshop/ShoppingCart',
+	'controller' => 'ShoppingCart',
+	'action'     => 'index'
+));
 //
 //CroogoRouter::connect('/cart/:action/*', array(
 //	'plugin'     => 'webshop_shopping_cart',

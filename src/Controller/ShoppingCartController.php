@@ -1,8 +1,10 @@
 <?php
 
-App::uses('WebshopShoppingCartAppController', 'WebshopShoppingCart.Controller');
+namespace Webshop\ShoppingCart\Controller;
 
-class ShoppingCartController extends WebshopShoppingCartAppController {
+use App\Controller\AppController;
+
+class ShoppingCartController extends AppController {
 
 	public $uses = array('Webshop.Product', 'Webshop.Customer', 'Webshop.AddressDetail', 'WebshopOrders.Order', 'WebshopShipping.ShippingMethod');
 
