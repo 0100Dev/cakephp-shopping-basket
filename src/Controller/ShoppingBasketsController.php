@@ -1,5 +1,7 @@
 <?php
 
+namespace Webshop\ShoppingBasket;
+
 App::uses('WebshopShoppingCartAppController', 'WebshopShoppingCart.Controller');
 
 class ShoppingBasketsController extends WebshopShoppingCartAppController {
