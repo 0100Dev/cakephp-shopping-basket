@@ -3,5 +3,5 @@
 	"type": "cakephp-plugin",
 	"require": {
 		"cvo-technologies/croogo-webshop-plugin": "3.0.*@dev"
-	},
+	}
 }
