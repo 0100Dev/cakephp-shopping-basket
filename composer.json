@@ -1,10 +1,7 @@
 {
 	"name": "cvo-technologies/croogo-webshop-shopping-cart-plugin",
-	"type": "croogo-plugin",
+	"type": "cakephp-plugin",
 	"require": {
-		"cvo-technologies/croogo-webshop-plugin": "dev-master"
+		"cvo-technologies/croogo-webshop-plugin": "3.0.*@dev"
 	},
-	"extra": {
-		"installer-name": "WebshopShoppingCart"
-	}
 }
