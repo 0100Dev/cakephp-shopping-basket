@@ -27,9 +27,10 @@ $total = 0;
 	</tr>
 	</tbody>
 </table>
-
-<?php echo $this->Html->link(__d('webshop_shopping_cart', 'Checkout'), array('action' => 'checkout')); ?>
-<?php echo $this->Form->postLink(__d('webshop_shopping_cart', 'Empty'), array('action' => 'clear')); ?>
+<div class="btn-group">
+	<?php echo $this->Html->link(__d('webshop_shopping_cart', 'Checkout'), array('action' => 'checkout'), array('class' => 'btn btn-primary')); ?>
+	<?php echo $this->Form->postLink(__d('webshop_shopping_cart', 'Empty'), array('action' => 'clear'), array('class' => 'btn btn-danger')); ?>
+</div>
 <?php Router::url(array('action' => 'load', '?' => array_combine(array_map(function ($str) { return 'product-' . $str; }, array_keys($cart_items)), Hash::extract($cart_items, '{n}.amount'))), true); ?>.
 <?php else: ?>
 	<p>Your shopping cart is empty</p>
