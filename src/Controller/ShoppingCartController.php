@@ -9,15 +9,22 @@ class ShoppingCartController extends AppController {
 	public $uses = array('Webshop.Product', 'Webshop.Customer', 'Webshop.AddressDetail', 'WebshopOrders.Order', 'WebshopShipping.ShippingMethod');
 
 	public function index() {
-		$cart_items = $this->Product->getCartItems();
+		$cartItems = $this->Product->getCartItems();
+
+//		foreach ($cart_items as $productId => $options) {
+//			debug($this->Product->getPrice($productId, $options['configuration']));
+//		}
+//
+//		debug($cart_items);
 
 		$products = $this->Product->find('all', array(
 			'conditions' => array(
-				'id' => array_keys($cart_items)
+				'id' => array_keys($cartItems)
 			)
 		));
 
-		$this->set(compact('cart_items', 'products'));
+		$this->set(compact('products', 'cartItems'));
+		$this->set('cart_items', $cartItems);
 	}
 
 	public function edit_configuration($id) {
@@ -37,13 +44,17 @@ class ShoppingCartController extends AppController {
 		}
 	}
 
-	public function add_product($id) {
+	public function add_product($id, $amount = 1) {
 		$this->Product->id = $id;
 		if (!$this->Product->exists()) {
 			throw new NotFoundException();
 		}
 
-		$this->Product->addToCart($id);
+		if ($amount < 1) {
+			throw new BadRequestException();
+		}
+
+		$this->Product->addToCart($id, $amount);
 
 		$this->redirect(array('action' => 'index'));
 	}
@@ -123,11 +134,16 @@ class ShoppingCartController extends AppController {
 	}
 
 	public function checkout() {
-		$customers = $this->Customer->find('list', array(
-			'conditions' => array(
-				$this->Customer->alias . '.id' => $this->CustomerAccess->getAccessibleCustomers()
-			)
-		));
+		if (count($this->Product->getCartItems()) === 0) {
+			$this->Session->setFlash(__d(
+				'webshop_shopping_cart',
+				'Please put some products in your shopping cart'
+			));
+
+			$this->redirect(array('action' => 'index'));
+			return;
+		}
+
 		$shippingMethods = $this->ShippingMethod->find('list', array(
 			'conditions' => array(
 				$this->ShippingMethod->alias . '.active' => true,
@@ -159,14 +175,19 @@ class ShoppingCartController extends AppController {
 			return;
 		}
 
-		$order = $this->Order->createFromCart($this->request->data['Order']['customer_id']);
+		$order = $this->Order->createFromCart($this->CustomerAccess->getCustomerId());
+		$order['Order'] = Hash::merge($order['Order'], $this->request->data['Order']);
+		$this->Order->save($order, array(
+			'Order.invoice_address_detail_id',
+			'Order.comment'
+		));
 
 		if ($hasPhysicalProducts) {
-			debug($this->Order->createShipment(
+			$this->Order->createShipment(
 				$order['Order']['id'],
 				$this->request->data['Order']['OrderShipment']['Shipment']['shipping_method_id'],
 				$this->request->data['Order']['OrderShipment']['Shipment']['address_detail_id']
-			));
+			);
 		}
 		$this->Session->setFlash(__d(
 			'webshop_shopping_cart',
@@ -178,7 +199,7 @@ class ShoppingCartController extends AppController {
 			'panel' => true,
 			'plugin' => 'webshop_orders',
 			'controller' => 'orders',
-			'action' => 'view',
+			'action' => 'pay',
 			$order['Order']['id']
 		));
 	}
