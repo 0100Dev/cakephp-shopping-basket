@@ -1,19 +1,27 @@
 <?php
 
-namespace Webshop\ShoppingBasket;
+namespace Webshop\ShoppingBasket\Controller;
 
-App::uses('WebshopShoppingCartAppController', 'WebshopShoppingCart.Controller');
+use Croogo\Core\Controller\CroogoAppController;
 
-class ShoppingBasketsController extends WebshopShoppingCartAppController {
+class ShoppingBasketsController extends CroogoAppController {
 
-	public $components = array(
+    public function initialize()
+    {
+        parent::initialize();
+
+        $this->loadComponent('Paginator');
+    }
+
+
+    public $components = array(
 		'Paginator'
 	);
 
 	public $uses = array('WebshopShoppingCart.ShoppingBasket', 'Webshop.Product', 'Webshop.Customer', 'Webshop.AddressDetail', 'WebshopOrders.Order', 'WebshopShipping.ShippingMethod');
 
 	public function index() {
-		debug($this->ShoppingBasket->find('all', array(
+		debug($this->ShoppingBaskets->find('all', array(
 
 		)));
 		$cartItems = $this->Product->getCartItems();
@@ -44,25 +52,18 @@ class ShoppingBasketsController extends WebshopShoppingCartAppController {
 			return;
 		}
 
-		$shoppingBasket = $this->ShoppingBasket->find('first', array(
-			'conditions' => array(
-				'ShoppingBasket.id' => $id
-			),
-			'contain' => array(
-				'Item' => array(
-					'Product' => array(
-						'Tax'
-					),
-					'ConfigurationValue' => array(
-						'ConfigurationOption'
-					)
-				)
-			)
-		));
-
-		if (empty($this->request->data)) {
-			$this->request->data = $shoppingBasket;
-		}
+		$shoppingBasket = $this->ShoppingBaskets->get($id, [
+            'contain' => [
+                'Items' => array(
+                    'Products' => array(
+//                        'Tax'
+                    ),
+                    'ConfigurationValues' => array(
+                        'ConfigurationOptions'
+                    )
+                )
+            ]
+        ]);
 
 		$this->set(compact('shoppingBasket'));
 	}
@@ -151,7 +152,7 @@ class ShoppingBasketsController extends WebshopShoppingCartAppController {
 	}
 
 	public function panel_save($id) {
-		$shoppingBasket = $this->ShoppingBasket->find('first', array(
+		$shoppingBasket = $this->ShoppingBaskets->find('first', array(
 			'conditions' => array(
 				'ShoppingBasket.id' => $id,
 				'ShoppingBasket.customer_id IS NULL'
@@ -174,7 +175,7 @@ class ShoppingBasketsController extends WebshopShoppingCartAppController {
 
 		$this->request->data('ShoppingBasket.customer_id', $this->CustomerAccess->getCustomerId());
 
-		if (!$this->ShoppingBasket->save($this->request->data)) {
+		if (!$this->ShoppingBaskets->save($this->request->data)) {
 			$this->Session->setFlash(__d('webshop_shopping_basket', 'Could not save shopping basket'), 'alert', array(
 				'plugin' => 'BoostCake',
 				'class' => 'alert-danger'

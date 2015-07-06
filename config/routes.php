@@ -22,11 +22,16 @@
 //
 use Croogo\Core\CroogoRouter;
 
-CroogoRouter::connect('/cart/*', array(
-	'plugin'     => 'Webshop/ShoppingCart',
-	'controller' => 'ShoppingCart',
-	'action'     => 'index'
+CroogoRouter::connect('/cart/:action/*', array(
+	'plugin'     => 'Webshop/ShoppingBasket',
+	'controller' => 'ShoppingBaskets',
 ));
+
+CroogoRouter::connect('/cart/items/:action/*', array(
+    'plugin'     => 'Webshop/ShoppingBasket',
+    'controller' => 'ShoppingBasketItems',
+));
+
 //
 //CroogoRouter::connect('/cart/:action/*', array(
 //	'plugin'     => 'webshop_shopping_cart',

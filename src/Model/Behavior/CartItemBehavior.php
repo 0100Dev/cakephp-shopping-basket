@@ -1,56 +1,54 @@
 <?php
 
-class CartItemBehavior extends ModelBehavior {
+namespace Webshop\ShoppingBasket\Model\Behavior;
 
-	public function setup(Model $Model, $config = array()) {
-		$Model->bindModel(array(
-			'belongsTo' => array(
-				'ShoppingBasketItem' => array(
-					'className' => 'WebshopShoppingCart.ShoppingBasketItem'
-				)
-			)
-		), false);
-	}
+use Cake\ORM\Behavior;
+use Cake\ORM\Entity;
+use Cake\Utility\Hash;
+use Webshop\Model\Entity\Product;
 
-	public function getCartItems(Model $Model) {
-		$products = CakeSession::read('WebshopShoppingCart.products');
-		if ($products === null) {
-			$products = array();
-		}
+class CartItemBehavior extends Behavior {
 
-		return $products;
-	}
+    public function initialize(array $config)
+    {
+        parent::initialize($config);
 
-	public function addToBasket(Model $Model, $id, array $options = array()) {
+        $this->_table->belongsTo('ShoppingBasketItems', [
+            'className' => 'Webshop/ShoppingBasket.ShoppingBasketItems'
+        ]);
+    }
+
+//	public function getCartItems(Model $Model) {
+//		$products = CakeSession::read('WebshopShoppingCart.products');
+//		if ($products === null) {
+//			$products = array();
+//		}
+//
+//		return $products;
+//	}
+
+	public function addToBasket(Product $product, array $options = []) {
 		$options = Hash::merge(array(
-			'basket' => $Model->ShoppingBasketItem->ShoppingBasket->currentBasketId(),
 			'amount' => 1,
 			'configuration' => array(),
 			'non_overridable' => array()
 		), array_filter($options));
 
-		$configurationGroupIds = $Model->ItemConfigurationGroup->find('list', array(
-			'fields' => array(
-				'ConfigurationGroup.id'
-			),
-			'conditions' => array(
-				'ItemConfigurationGroup.foreign_key' => $id,
-				'ItemConfigurationGroup.model' => $Model->name,
-			),
-			'contain' => array(
-				'ConfigurationGroup'
-			)
-		));
+		$configurationGroupIds = $this->_table->ItemConfigurationGroups->find('list', [
+            'valueField' => 'configuration_group_id'
+        ])->where([
+            'ItemConfigurationGroups.foreign_key' => $product->id,
+            'ItemConfigurationGroups.model' => get_class($this->_table),
+        ])->toArray();
 
-		$valueData = $Model->ShoppingBasketItem->ConfigurationValue->generateValueData(
-			$Model->ShoppingBasketItem->name, $configurationGroupIds, $options['configuration'], $options['non_overridable']
+		$valueData = $this->_table->ShoppingBasketItems->ConfigurationValues->generateValueData(
+            get_class($this->_table->ShoppingBasketItems->target()),
+            $configurationGroupIds,
+            $options['configuration'],
+            $options['non_overridable']
 		);
 
-		$stackable = $Model->field('stackable', array(
-			'id' => $id
-		));
-
-		if ($stackable) {
+		if ($product->stackable) {
 			$shoppingBasketItemId = $Model->ShoppingBasketItem->field('id', array(
 				'ShoppingBasketItem.shopping_basket_id' => $options['basket'],
 				'ShoppingBasketItem.product_id' => $id
@@ -77,16 +75,13 @@ class CartItemBehavior extends ModelBehavior {
 		}
 
 		for ($number = 1; $number <= $options['amount']; $number++) {
-			$Model->ShoppingBasketItem->create();
-			$data = $Model->ShoppingBasketItem->saveAssociated(array(
-				'ShoppingBasketItem' => array(
-					'shopping_basket_id' => $options['basket'],
-					'product_id' => $id,
-					'amount' => 1
-				),
-				'ConfigurationValue' => $valueData
-			));
-
+            $shoppingBasketItem = $this->_table->ShoppingBasketItems->newEntity([
+                'shopping_basket_id' => $options['basket'],
+                'product_id' => $product->id,
+                'amount' => 1,
+                'configuration_values' => $valueData
+            ]);
+			$data = $this->_table->ShoppingBasketItems->save($shoppingBasketItem);
 			if (!$data) {
 				return false;
 			}

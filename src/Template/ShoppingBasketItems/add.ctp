@@ -1,21 +1,21 @@
-<?php echo $this->Form->create('ShoppingBasketItem'); ?>
+<?php echo $this->Form->create($shoppingBasketItem); ?>
 
-<?php echo $this->Form->hidden('ShoppingBasketItem.shopping_basket_id'); ?>
-<?php echo $this->Form->hidden('ShoppingBasketItem.product_id'); ?>
+<?php echo $this->Form->hidden('shopping_basket_id'); ?>
+<?php echo $this->Form->hidden('product_id'); ?>
 
-<?php if ($stackable): ?>
-	<?php echo $this->Form->input('ShoppingBasketItem.amount'); ?>
+<?php if ($product->stackable): ?>
+	<?php echo $this->Form->input('amount'); ?>
 <?php endif; ?>
 
 <?php
 
 $configurationParts = array();
 $this->ConfigurationOption->setOptions($options);
-$this->ConfigurationOption->setProductDefaults($product['ConfigurationValue']);
+$this->ConfigurationOption->setProductDefaults($product->configuration_values);
 
 echo $this->ConfigurationOption->form(array(
 	'input' => array(
-		'prefix' => 'ConfigurationValue.'
+		'prefix' => 'configuration_values.'
 	),
 	'relation' => array(
 		'model' => 'ShoppingBasketItem',

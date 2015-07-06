@@ -1,34 +1,26 @@
 <?php
 
-App::uses('WebshopShoppingBasketAppModel', 'WebshopShoppingCart.Model');
+namespace Webshop\ShoppingBasket\Model\Table;
 
-class ShoppingBasket extends WebshopShoppingBasketAppModel {
+use Cake\ORM\Table;
 
-	public $hasMany = array(
-		'Item' => array(
-			'className' => 'WebshopShoppingCart.ShoppingBasketItem',
-		)
-	);
+class ShoppingBasketsTable extends Table {
 
-	public function currentBasketId() {
-		if (!CakeSession::check('WebshopShoppingBasket.current_basket_id')) {
-			$basketId = $this->createBasket();
+    public function initialize(array $config)
+    {
+        parent::initialize($config);
 
-			if (!$basketId) {
-				return false;
-			}
+        $this->hasMany('Items', [
+            'className' => 'Webshop/ShoppingBasket.ShoppingBasketItems',
+        ]);
+    }
 
-			CakeSession::write('WebshopShoppingBasket.current_basket_id', $basketId);
-		}
 
-		return CakeSession::read('WebshopShoppingBasket.current_basket_id');
-	}
+    public function createBasket() {
+		$shoppingBasket = $this->newEntity();
+		$shoppingBasket = $this->save($shoppingBasket);
 
-	public function createBasket() {
-		$this->create();
-		$shoppingBasket = $this->save();
-
-		return $shoppingBasket[$this->alias]['id'];
+		return $shoppingBasket->id;
 	}
 
 }

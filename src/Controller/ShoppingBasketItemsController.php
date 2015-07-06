@@ -1,89 +1,83 @@
 <?php
 
-App::uses('WebshopShoppingCartAppController', 'WebshopShoppingCart.Controller');
+namespace Webshop\ShoppingBasket\Controller;
+
+use Croogo\Core\Controller\CroogoAppController;
+use Webshop\Model\Entity\Product;
+use Webshop\ShoppingBasket\Model\Table\ShoppingBasketItemsTable;
+
 
 /**
  * Class ShoppingBasketItemsController
  *
- * @property ShoppingBasketItem ShoppingBasketItem
+ * @property ShoppingBasketItemsTable ShoppingBasketItems
  */
-class ShoppingBasketItemsController extends WebshopShoppingCartAppController {
+class ShoppingBasketItemsController extends CroogoAppController {
 
 	/**
 	 * @param null $productId
 	 */
 	public function add($productId = null) {
 		if ($productId) {
-			$this->request->data('ShoppingBasketItem.product_id', $productId);
+			$this->request->data('product_id', $productId);
 		}
 
-		$this->request->data('ShoppingBasketItem.shopping_basket_id', $this->ShoppingBasketItem->ShoppingBasket->currentBasketId());
+        $shoppingBasketItem = $this->ShoppingBasketItems->newEntity([
+            'shopping_basket_id' => $this->ShoppingBasket->currentBasketId()
+        ]);
 
-		$stackable = $this->ShoppingBasketItem->Product->field('stackable', array(
-			'Product.id' => $this->request->data('ShoppingBasketItem.product_id')
-		));
+        /** @var Product $product */
+        $product = $this->ShoppingBasketItems->Products->find()
+            ->where([
+                'Products.id' => $this->request->data('product_id')
+            ])
+            ->contain([
+                'ConfigurationValues'
+            ])
+            ->find('options')
+            ->firstOrFail();
 
-		$product = $this->ShoppingBasketItem->Product->find('first', array(
-			'conditions' => array(
-				'Product.id' => $this->request->data('ShoppingBasketItem.product_id')
-			),
-			'contain' => array(
-				'ConfigurationValue'
-			)
-		));
+		$options = $product->options();
 
-		$options = $this->ShoppingBasketItem->Product->find('options', array(
-			'conditions' => array(
-				'Product.id' => $this->request->data('ShoppingBasketItem.product_id')
-			),
-		));
-		if (isset($options[0])) {
-			$options = $options[0];
-		}
-
-		$this->set(compact('stackable', 'product', 'options'));
+		$this->set(compact('stackable', 'product', 'options', 'shoppingBasketItem'));
 
 		if (!$this->request->is('post')) {
 			return;
 		}
 
-		$productNonOverridableValues = $this->ShoppingBasketItem->Product->find('first', array(
-			'fields' => array(),
-			'conditions' => array(
-				'Product.id' => $this->request->data('ShoppingBasketItem.product_id')
-			),
-			'contain' => array(
-				'ConfigurationValue' => array(
-					'conditions' => array(
-						'ConfigurationValue.overridable' => false
-					)
-				)
-			)
-		));
+		$productNonOverridableValues = $this->ShoppingBasketItems->Products->find()->where([
+            'Products.id' => $this->request->data('product_id')
+        ])->contain([
+            'ConfigurationValues' => [
+                'conditions' => [
+                    'ConfigurationValues.overridable' => false
+                ]
+            ]
+        ])->firstOrFail();
 
-		if (!$this->ShoppingBasketItem->Product->addToBasket($this->request->data('ShoppingBasketItem.product_id'), array(
-			'basket' => $this->request->data('ShoppingBasketItem.shopping_basket_id'),
-			'amount' => ($stackable) ? $this->request->data('ShoppingBasketItem.amount') : 1,
-			'configuration' => $this->ShoppingBasketItem->parseConfiguration(
-				$this->request->data['ConfigurationValue']
+		if (!$this->ShoppingBasketItems->Products->addToBasket($product, [
+			'basket' => $this->request->data('shopping_basket_id'),
+			'amount' => ($product->stackable) ? $this->request->data('amount') : 1,
+			'configuration' => $this->ShoppingBasketItems->parseConfiguration(
+				$this->request->data['configuration_values']
 			),
-			'non_overridable' => $this->ShoppingBasketItem->parseConfiguration(
-				$productNonOverridableValues['ConfigurationValue']
+			'non_overridable' => $this->ShoppingBasketItems->parseConfiguration(
+				$productNonOverridableValues->configuration_values
 			)
-		))) {
+        ])) {
 			return;
 		}
 
 		$this->redirect(array(
-			'controller' => 'shopping_baskets',
+			'controller' => 'ShoppingBaskets',
 			'action' => 'view',
-			$this->ShoppingBasketItem->ShoppingBasket->currentBasketId()
+            $this->request->data('shopping_basket_id')
 		));
 	}
 
 
 	public function edit($id) {
-		$shoppingBasketItem = $this->ShoppingBasketItem->find('first', array(
+		$shoppingBasketItem = $this->ShoppingBasketItems->find('first', array(
 			'conditions' => array(
 				'ShoppingBasketItem.id' => $id
 			),
@@ -97,7 +91,7 @@ class ShoppingBasketItemsController extends WebshopShoppingCartAppController {
 			)
 		));
 
-		$options = $this->ShoppingBasketItem->Product->find('options', array(
+		$options = $this->ShoppingBasketItems->Products->find('options', array(
 			'conditions' => array(
 				'Product.id' => $shoppingBasketItem['Product']['id']
 			),
@@ -116,7 +110,7 @@ class ShoppingBasketItemsController extends WebshopShoppingCartAppController {
 			return;
 		}
 
-		if (!$this->ShoppingBasketItem->saveAssociated($this->request->data)) {
+		if (!$this->ShoppingBasketItems->saveAssociated($this->request->data)) {
 			debug(':(');
 
 			return;

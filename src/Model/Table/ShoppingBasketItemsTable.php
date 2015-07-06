@@ -1,20 +1,23 @@
 <?php
 
-App::uses('WebshopShoppingBasketAppModel', 'WebshopShoppingCart.Model');
+namespace Webshop\ShoppingBasket\Model\Table;
 
-class ShoppingBasketItem extends WebshopShoppingBasketAppModel {
+use Cake\ORM\Table;
 
-	public $actsAs = array(
-		'Webshop.ConfigurationValueHost',
-	);
+class ShoppingBasketItemsTable extends Table {
 
-	public $belongsTo = array(
-		'ShoppingBasket' => array(
-			'className' => 'WebshopShoppingCart.ShoppingBasket'
-		),
-		'Product' => array(
-			'className' => 'Webshop.Product'
-		)
-	);
+    public function initialize(array $config)
+    {
+        parent::initialize($config);
+
+        $this->addBehavior('Webshop.ConfigurationValueHost');
+        $this->belongsTo('ShoppingBaskets', [
+            'className' => 'Webshop/ShoppingBasket.ShoppingBaskets'
+        ]);
+        $this->belongsTo('Products', [
+            'className' => 'Webshop.Products'
+        ]);
+    }
+
 
 }
