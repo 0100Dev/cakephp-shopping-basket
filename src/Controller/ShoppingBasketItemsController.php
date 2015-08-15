@@ -77,46 +77,42 @@ class ShoppingBasketItemsController extends CroogoAppController {
 
 
 	public function edit($id) {
-		$shoppingBasketItem = $this->ShoppingBasketItems->find('first', array(
-			'conditions' => array(
-				'ShoppingBasketItem.id' => $id
-			),
-			'contain' => array(
-				'Product' => array(
-					'ConfigurationValue'
-				),
-				'ConfigurationValue' => array(
-					'ConfigurationOption'
-				)
-			)
-		));
+		$shoppingBasketItem = $this->ShoppingBasketItems->get($id, [
+			'contain' => [
+				'Products' => [
+					'ConfigurationValues'
+                ],
+				'ConfigurationValues' => [
+					'ConfigurationOptions'
+                ]
+            ]
+        ]);
 
-		$options = $this->ShoppingBasketItems->Products->find('options', array(
-			'conditions' => array(
-				'Product.id' => $shoppingBasketItem['Product']['id']
-			),
-		));
-		if (isset($options[0])) {
-			$options = $options[0];
-		}
+        /** @var Product $product */
+        $product = $this->ShoppingBasketItems->Products->find('options')->where(array(
+            'Products.id' => $shoppingBasketItem->product->id
+		))->firstOrFail();
+        $options = $product->options();
 
-		if (empty($this->request->data)) {
-			$this->request->data = $shoppingBasketItem;
-		}
-//
 		$this->set(compact('shoppingBasketItem', 'options'));
 
 		if (!$this->request->is('put')) {
 			return;
 		}
 
-		if (!$this->ShoppingBasketItems->saveAssociated($this->request->data)) {
+        $shoppingBasketItem = $this->ShoppingBasketItems->patchEntity($shoppingBasketItem, $this->request->data);
+
+		if (!$this->ShoppingBasketItems->save($shoppingBasketItem)) {
 			debug(':(');
 
 			return;
 		}
 
-		debug($this->request->data);
+		$this->redirect([
+            'controller' => 'ShoppingBaskets',
+            'action' => 'view',
+            $shoppingBasketItem->shopping_basket_id
+        ]);
 	}
-	
+
 }

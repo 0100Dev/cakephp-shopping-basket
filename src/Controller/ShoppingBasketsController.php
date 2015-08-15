@@ -2,8 +2,14 @@
 
 namespace Webshop\ShoppingBasket\Controller;
 
+use Cake\Network\Response;
 use Croogo\Core\Controller\CroogoAppController;
+use Webshop\Orders\Model\Table\OrdersTable;
+use Webshop\ShoppingBasket\Model\Entity\ShoppingBasket;
 
+/**
+ * @property OrdersTable Orders
+ */
 class ShoppingBasketsController extends CroogoAppController {
 
     public function initialize()
@@ -17,8 +23,6 @@ class ShoppingBasketsController extends CroogoAppController {
     public $components = array(
 		'Paginator'
 	);
-
-	public $uses = array('WebshopShoppingCart.ShoppingBasket', 'Webshop.Product', 'Webshop.Customer', 'Webshop.AddressDetail', 'WebshopOrders.Order', 'WebshopShipping.ShippingMethod');
 
 	public function index() {
 		debug($this->ShoppingBaskets->find('all', array(
@@ -44,10 +48,10 @@ class ShoppingBasketsController extends CroogoAppController {
 
 	public function view($id = null) {
 		if (!$id) {
-			$this->redirect(array(
+			$this->redirect([
 				'action' => 'view',
 				$this->ShoppingBasket->currentBasketId()
-			));
+            ]);
 
 			return;
 		}
@@ -72,49 +76,41 @@ class ShoppingBasketsController extends CroogoAppController {
 
 	}
 
-	public function checkout() {
-		if (count($this->Product->getCartItems()) === 0) {
-			$this->Session->setFlash(__d(
-				'webshop_shopping_cart',
-				'Please put some products in your shopping cart'
-			));
+	public function checkout($id) {
+        /** @var ShoppingBasket $shoppingBasket */
+        $shoppingBasket = $this->ShoppingBaskets->get($id, [
+            'contain' => [
+                'Items' => [
+                    'ConfigurationValues' => [
+                        'ConfigurationOptions'
+                    ]
+                ]
+            ]
+        ]);
+        if ($shoppingBasket->isEmpty()) {
+            $this->Flash->set(__d('webshop/shopping_basket', 'Please add something to your shopping basket'));
 
-			$this->redirect(array('action' => 'index'));
-			return;
-		}
+            return $this->redirect([
+                'action' => 'view',
+                $id
+            ]);
+        }
 
-		$shippingMethods = $this->ShippingMethod->find('list', array(
-			'conditions' => array(
-				$this->ShippingMethod->alias . '.active' => true,
-				$this->ShippingMethod->alias . '.available' => true
-			)
-		));
-		$addressDetails = $this->AddressDetail->find('list', array(
-			'fields' => array(
-				$this->AddressDetail->alias . '.id',
-				$this->AddressDetail->alias . '.name',
-				$this->AddressDetail->Customer->alias . '.name',
-			),
-			'conditions' => array(
-				$this->AddressDetail->alias . '.customer_id' => $this->CustomerAccess->getCustomerId()
-			),
-			'recursive' => 0
-		));
+        if ($this->CustomerAccess->getCustomerId() instanceof Response) {
+            return $this->CustomerAccess->getCustomerId();
+        }
 
-		$hasPhysicalProducts = ($this->Product->find('count', array(
-			'conditions' => array(
-				'id' => array_keys($this->Product->getCartItems()),
-				'digital' => 0
-			)
-		)) > 0);
+        $this->loadModel('Webshop/Orders.Orders');
 
-		$this->set(compact('customers', 'shippingMethods', 'addressDetails', 'hasPhysicalProducts'));
+        $order = $this->Orders->prepare($this->CustomerAccess->getCustomer());
 
-		if (!$this->request->is('post')) {
-			return;
-		}
+        $order->duplicateItemContainer($shoppingBasket, $this->Orders->Items->target());
 
-		$order = $this->Order->createFromCart($this->CustomerAccess->getCustomerId());
+        debug($this->CustomerAccess->getCustomer());
+        exit();
+
+		$order = $this->Orders->createFromCart($this->CustomerAccess->getCustomerId());
+        debug($order);exit();
 		$order['Order'] = Hash::merge($order['Order'], $this->request->data['Order']);
 		$this->Order->save($order, array(
 			'Order.invoice_address_detail_id',

@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="WEB_MODULE" version="4">
+  <component name="NewModuleRootManager" inherit-compiler-output="false">
+    <content url="file://$MODULE_DIR$" />
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module-library">
+      <library name="PHP">
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/../../robmorgan/phinx" />
+          <root url="file://$MODULE_DIR$/../../jakub-onderka/php-console-highlighter" />
+          <root url="file://$MODULE_DIR$/../../phpunit/php-token-stream" />
+          <root url="file://$MODULE_DIR$/../../phpdocumentor/reflection-docblock" />
+          <root url="file://$MODULE_DIR$/../../cakephp/plugin-installer" />
+          <root url="file://$MODULE_DIR$/../../nikic/php-parser" />
+          <root url="file://$MODULE_DIR$/../../cakephp/migrations" />
+          <root url="file://$MODULE_DIR$/../../symfony/console" />
+          <root url="file://$MODULE_DIR$/../../admad/cakephp-sequence" />
+          <root url="file://$MODULE_DIR$/../croogo-webshop-shopping-cart-plugin" />
+          <root url="file://$MODULE_DIR$/../../cakephp/bake" />
+          <root url="file://$MODULE_DIR$/../../phpunit/phpunit-mock-objects" />
+          <root url="file://$MODULE_DIR$/../../cakephp/cakephp" />
+          <root url="file://$MODULE_DIR$/../../phpunit/php-code-coverage" />
+          <root url="file://$MODULE_DIR$/../../psr/log" />
+          <root url="file://$MODULE_DIR$/../../dnoegel/php-xdg-base-dir" />
+          <root url="file://$MODULE_DIR$/../../cakedc/search" />
+          <root url="file://$MODULE_DIR$/../../jakub-onderka/php-console-color" />
+          <root url="file://$MODULE_DIR$/../webshop-customer-users" />
+          <root url="file://$MODULE_DIR$/../../phpunit/php-timer" />
+          <root url="file://$MODULE_DIR$/../../holt59/cakephp3-bootstrap3-helpers" />
+          <root url="file://$MODULE_DIR$/../socialseo" />
+          <root url="file://$MODULE_DIR$/../../symfony/config" />
+          <root url="file://$MODULE_DIR$/../../aura/installer-default" />
+          <root url="file://$MODULE_DIR$/../../ircmaxell/password-compat" />
+          <root url="file://$MODULE_DIR$/../../sebastian/version" />
+          <root url="file://$MODULE_DIR$/../../holt59/Bootstrap3" />
+          <root url="file://$MODULE_DIR$/../croogo-webshop-plugin" />
+          <root url="file://$MODULE_DIR$/../../symfony/filesystem" />
+          <root url="file://$MODULE_DIR$/../../phpunit/php-file-iterator" />
+          <root url="file://$MODULE_DIR$/../../composer" />
+          <root url="file://$MODULE_DIR$/../../tecnick.com/tcpdf" />
+          <root url="file://$MODULE_DIR$/../../sebastian/environment" />
+          <root url="file://$MODULE_DIR$/../../doctrine/instantiator" />
+          <root url="file://$MODULE_DIR$/../../sebastian/recursion-context" />
+          <root url="file://$MODULE_DIR$/../croogo-webshop-payments-plugin" />
+          <root url="file://$MODULE_DIR$/../../rchavik/sites" />
+          <root url="file://$MODULE_DIR$/../../phpspec/prophecy" />
+          <root url="file://$MODULE_DIR$/../../aura/intl" />
+          <root url="file://$MODULE_DIR$/../../nesbot/carbon" />
+          <root url="file://$MODULE_DIR$/../../friendsofcake/cakepdf" />
+          <root url="file://$MODULE_DIR$/../../sebastian/global-state" />
+          <root url="file://$MODULE_DIR$/../../phpunit/php-text-template" />
+          <root url="file://$MODULE_DIR$/../../croogo/ckeditor" />
+          <root url="file://$MODULE_DIR$/../../sebastian/comparator" />
+          <root url="file://$MODULE_DIR$/../../cakephp/debug_kit" />
+          <root url="file://$MODULE_DIR$/../webshop-taxes" />
+          <root url="file://$MODULE_DIR$/../croogo-nodes-datasource-plugin" />
+          <root url="file://$MODULE_DIR$/../../cakephp/acl" />
+          <root url="file://$MODULE_DIR$/../../mobiledetect/mobiledetectlib" />
+          <root url="file://$MODULE_DIR$/../../phpunit/phpunit" />
+          <root url="file://$MODULE_DIR$/../../symfony/yaml" />
+          <root url="file://$MODULE_DIR$/../../friendsofcake/crud" />
+          <root url="file://$MODULE_DIR$/../../sebastian/diff" />
+          <root url="file://$MODULE_DIR$/../../sebastian/exporter" />
+          <root url="file://$MODULE_DIR$/../../psy/psysh" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/../../robmorgan/phinx" />
+          <root url="file://$MODULE_DIR$/../../jakub-onderka/php-console-highlighter" />
+          <root url="file://$MODULE_DIR$/../../phpunit/php-token-stream" />
+          <root url="file://$MODULE_DIR$/../../phpdocumentor/reflection-docblock" />
+          <root url="file://$MODULE_DIR$/../../cakephp/plugin-installer" />
+          <root url="file://$MODULE_DIR$/../../nikic/php-parser" />
+          <root url="file://$MODULE_DIR$/../../cakephp/migrations" />
+          <root url="file://$MODULE_DIR$/../../symfony/console" />
+          <root url="file://$MODULE_DIR$/../../admad/cakephp-sequence" />
+          <root url="file://$MODULE_DIR$/../croogo-webshop-shopping-cart-plugin" />
+          <root url="file://$MODULE_DIR$/../../cakephp/bake" />
+          <root url="file://$MODULE_DIR$/../../phpunit/phpunit-mock-objects" />
+          <root url="file://$MODULE_DIR$/../../cakephp/cakephp" />
+          <root url="file://$MODULE_DIR$/../../phpunit/php-code-coverage" />
+          <root url="file://$MODULE_DIR$/../../psr/log" />
+          <root url="file://$MODULE_DIR$/../../dnoegel/php-xdg-base-dir" />
+          <root url="file://$MODULE_DIR$/../../cakedc/search" />
+          <root url="file://$MODULE_DIR$/../../jakub-onderka/php-console-color" />
+          <root url="file://$MODULE_DIR$/../webshop-customer-users" />
+          <root url="file://$MODULE_DIR$/../../phpunit/php-timer" />
+          <root url="file://$MODULE_DIR$/../../holt59/cakephp3-bootstrap3-helpers" />
+          <root url="file://$MODULE_DIR$/../socialseo" />
+          <root url="file://$MODULE_DIR$/../../symfony/config" />
+          <root url="file://$MODULE_DIR$/../../aura/installer-default" />
+          <root url="file://$MODULE_DIR$/../../ircmaxell/password-compat" />
+          <root url="file://$MODULE_DIR$/../../sebastian/version" />
+          <root url="file://$MODULE_DIR$/../../holt59/Bootstrap3" />
+          <root url="file://$MODULE_DIR$/../croogo-webshop-plugin" />
+          <root url="file://$MODULE_DIR$/../../symfony/filesystem" />
+          <root url="file://$MODULE_DIR$/../../phpunit/php-file-iterator" />
+          <root url="file://$MODULE_DIR$/../../composer" />
+          <root url="file://$MODULE_DIR$/../../tecnick.com/tcpdf" />
+          <root url="file://$MODULE_DIR$/../../sebastian/environment" />
+          <root url="file://$MODULE_DIR$/../../doctrine/instantiator" />
+          <root url="file://$MODULE_DIR$/../../sebastian/recursion-context" />
+          <root url="file://$MODULE_DIR$/../croogo-webshop-payments-plugin" />
+          <root url="file://$MODULE_DIR$/../../rchavik/sites" />
+          <root url="file://$MODULE_DIR$/../../phpspec/prophecy" />
+          <root url="file://$MODULE_DIR$/../../aura/intl" />
+          <root url="file://$MODULE_DIR$/../../nesbot/carbon" />
+          <root url="file://$MODULE_DIR$/../../friendsofcake/cakepdf" />
+          <root url="file://$MODULE_DIR$/../../sebastian/global-state" />
+          <root url="file://$MODULE_DIR$/../../phpunit/php-text-template" />
+          <root url="file://$MODULE_DIR$/../../croogo/ckeditor" />
+          <root url="file://$MODULE_DIR$/../../sebastian/comparator" />
+          <root url="file://$MODULE_DIR$/../../cakephp/debug_kit" />
+          <root url="file://$MODULE_DIR$/../webshop-taxes" />
+          <root url="file://$MODULE_DIR$/../croogo-nodes-datasource-plugin" />
+          <root url="file://$MODULE_DIR$/../../cakephp/acl" />
+          <root url="file://$MODULE_DIR$/../../mobiledetect/mobiledetectlib" />
+          <root url="file://$MODULE_DIR$/../../phpunit/phpunit" />
+          <root url="file://$MODULE_DIR$/../../symfony/yaml" />
+          <root url="file://$MODULE_DIR$/../../friendsofcake/crud" />
+          <root url="file://$MODULE_DIR$/../../sebastian/diff" />
+          <root url="file://$MODULE_DIR$/../../sebastian/exporter" />
+          <root url="file://$MODULE_DIR$/../../psy/psysh" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+  </component>
+</module>

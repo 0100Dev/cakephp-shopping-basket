@@ -1,22 +1,24 @@
 <?php
 
+/** @var \Webshop\ShoppingBasket\Model\Entity\ShoppingBasketItem $shoppingBasketItem */
+
 $configurationParts = array();
 $this->ConfigurationOption->setOptions($options);
-$this->ConfigurationOption->setProductDefaults($shoppingBasketItem['Product']['ConfigurationValue']);
-$this->ConfigurationOption->setValues($shoppingBasketItem['ShoppingBasketItem']['configuration']);
-$this->ConfigurationOption->setValueStoreIds(Hash::combine($shoppingBasketItem, 'ConfigurationValue.{n}.ConfigurationOption.alias', 'ConfigurationValue.{n}.id'));
+$this->ConfigurationOption->setProductDefaults($shoppingBasketItem->product->configuration_values);
+$this->ConfigurationOption->setValues($shoppingBasketItem->configuration());
+$this->ConfigurationOption->setValueStoreIds($shoppingBasketItem->configurationValueIds());
 
-echo $this->Form->create('ShoppingBasketItem');
+echo $this->Form->create($shoppingBasketItem);
 
 echo $this->Form->input('amount');
 
 echo $this->ConfigurationOption->form(array(
 	'input' => array(
-		'prefix' => 'ConfigurationValue.'
+		'prefix' => 'configuration_values.'
 	),
 	'relation' => array(
-		'model' => 'ShoppingBasketItem',
-		'id' => $shoppingBasketItem['ShoppingBasketItem']['id']
+		'model' => 'Webshop\ShoppingBasket\Model\Table\ShoppingBasketItemsTable',
+		'id' => $shoppingBasketItem->id
 	)
 ));
 

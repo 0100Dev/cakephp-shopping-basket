@@ -1,8 +1,13 @@
 <?php
 
-class CartOrderBehavior extends ModelBehavior {
+namespace Webshop\ShoppingBasket\Model\Behavior;
 
-	public function createFromCart(Model $Model, $customerId) {
+use Cake\ORM\Behavior;
+use Webshop\Model\Entity\Customer;
+
+class CartOrderBehavior extends Behavior {
+
+	public function createFromCart(Customer $customer) {
 		return $Model->createFromProductList($customerId, $Model->OrderProduct->Product->getCartItems());
 	}
 
