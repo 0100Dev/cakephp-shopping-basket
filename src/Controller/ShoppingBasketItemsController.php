@@ -2,7 +2,7 @@
 
 namespace Webshop\ShoppingBasket\Controller;
 
-use Croogo\Core\Controller\CroogoAppController;
+use Croogo\Core\Controller\AppController as CroogoAppController;
 use Webshop\Model\Entity\Product;
 use Webshop\ShoppingBasket\Model\Table\ShoppingBasketItemsTable;
 

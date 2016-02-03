@@ -3,7 +3,7 @@
 namespace Webshop\ShoppingBasket\Controller;
 
 use Cake\Network\Response;
-use Croogo\Core\Controller\CroogoAppController;
+use Croogo\Core\Controller\AppController as CroogoAppController;
 use Webshop\Orders\Model\Table\OrdersTable;
 use Webshop\ShoppingBasket\Model\Entity\ShoppingBasket;
 

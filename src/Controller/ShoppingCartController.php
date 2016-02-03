@@ -1,6 +1,6 @@
 <?php
 
-namespace Webshop\ShoppingCart\Controller;
+namespace Webshop\ShoppingBasket\Controller;
 
 use App\Controller\AppController;
 
