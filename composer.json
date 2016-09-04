@@ -1,8 +1,8 @@
 {
-    "name": "cvo-technologies/webshop-shopping-basket",
+    "name": "0100dev/cakephp-shopping-basket",
     "type": "cakephp-plugin",
     "require": {
-        "cvo-technologies/croogo-webshop-plugin": "3.0.*@dev"
+
     },
     "autoload": {
         "psr-4": {
